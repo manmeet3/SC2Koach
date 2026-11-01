@@ -13,6 +13,7 @@
   "snapshots": [{"t": 10.0, "player": 1, "minerals": 120, "gas": 0, "supply_used": 14,
                  "supply_made": 15, "workers": 13, "army_value": 0}],
   "unit_events": [],
+  "resource_trades": [{"t": 312.5, "from": 1, "to": 2, "minerals": 200, "gas": 0}],
   "command_events": []
 }
 ```
@@ -22,7 +23,7 @@
 {
   "player": 1,
   "workers_at_4m": 42,
-  "unspent": {"mean": 480, "peak": 1900, "series": [[10.0, 120]]},
+  "unspent": {"mean": 480, "peak": 1900, "sq": 62, "series": [[10.0, 120]]},
   "supply_blocks": [{"start": 130.0, "end": 155.0, "supply": 22}],
   "expansions": [{"n": 2, "started": 62.0, "finished": 110.0}],
   "army_value": [[10.0, 0]]
@@ -66,4 +67,4 @@
   }]
 }
 ```
-All times in seconds of game time. Schemas will be formalized as pydantic models in `models.py`.
+All times are **real seconds matching the in-game clock** (`game_loop / 22.4`). Schemas will be formalized as pydantic models in `models.py`.

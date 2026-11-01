@@ -3,7 +3,7 @@
 ## Phase 1 — MVP: Replay → Markdown (no LLM required)
 - CLI: `sc2koach analyze <replay.SC2Replay> -o report.md`
 - sc2reader parsing, ranked 2v2/3v3 (teams modeled explicitly)
-- 5 per-player metrics: workers at 4:00, unspent resources, supply blocks, expansion timings, army value curve
+- 5 per-player metrics: workers at 4:00, unspent resources + spending quotient (trade-adjusted), supply blocks, expansion timings, army value curve
 - 2 team metrics: team army value over time (vs. enemy team), player elimination / early ally death
 - Moment detection with timestamps
 - Comparative view: teammate vs. teammate and player vs. opposing counterpart (paired by lobby slot)

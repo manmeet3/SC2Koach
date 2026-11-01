@@ -8,9 +8,10 @@
 
 ## Details
 - Load with `sc2reader.load_replay(path, load_level=4)` (full events needed for commands and unit events).
-- Convert game loops to seconds using the replay's speed factor; store all times as seconds (float) of game time.
-- Snapshots come from `PlayerStatsEvent` (~every 10s): minerals/gas, income, supply used/made, workers active, army value, etc.
-- Unit events: `UnitBornEvent`, `UnitInitEvent`, `UnitDoneEvent`, `UnitDiedEvent`, `UpgradeCompleteEvent`.
+- **Time:** store all times as **real seconds matching the in-game clock**: `t = game_loop / 22.4` (Faster speed). Don't use sc2reader's `event.second`; it counts Normal-speed seconds (`loop / 16`) and is 1.4× off from the in-game timer.
+- Snapshots come from `PlayerStatsEvent`, every 160 game loops (**~7.14 real seconds**): minerals/gas, income, supply used/made, workers active, army value, etc.
+- Unit events: `UnitBornEvent`, `UnitInitEvent`, `UnitDoneEvent`, `UnitDiedEvent`, `UnitTypeChangeEvent`, `UpgradeCompleteEvent`. Keep `(x, y)` positions for town halls (needed for expansion detection).
+- Resource trades: `ResourceTradeEvent` (ally → ally minerals/gas) into `resource_trades[]`.
 - Command events: selection, control-group, ability commands (for APM, injects, chrono).
 
 ## Errors
@@ -25,3 +26,5 @@
 
 ## Testing
 - Fixture replays covering each race matchup; assert player count, duration, known snapshot values.
+- Time check: a known event (e.g. first expansion finished) matches the in-game timer to within 1s.
+- Worker check: compare `workers_active_count` against an event-based worker count to confirm what the snapshot field includes.

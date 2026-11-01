@@ -29,7 +29,6 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | Q7 | How to define matchup keys for team compositions (e.g. `TP vs ZZ`, 3-race combos, ordering)? | Benchmark keys explode in count | Sort races within a team; key = mode + both compositions |
 | Q8 | How to handle early leavers, disconnects, AI, or observers? | Distorts metrics and benchmarks | Flag the player, exclude from team-level aggregates |
 | Q9 | Fight attribution in team fights: whose army value lost/killed? | Fights metric (Phase 3) | Team-level first; per-player later |
-| Q10 | How precise must supply-block detection be given 10s snapshots? | Rebuild from unit events vs. snapshot approximation | Rebuild from unit events |
 | Q11 | sc2reader support for the user's current game build? | Parser may fail on new patches | Test early in M0; fall back to s2protocol |
 | Q12 | Front-end stack: FastAPI + React vs. Streamlit/NiceGUI? | Phase 4 effort | Decide at start of Phase 4 |
 | Q13 | Discord bot in scope? | Delivery channel | Deferred |
@@ -68,3 +67,9 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | Q27 | Focus identity: `--focus` (name), `--focus-id` (toon handle), `--alias` (repeatable), or the same keys in config. Match order: toon handle → name → aliases. No unique match: warn, neutral third-person report | 2026-10-31 |
 | Q28 | Roster is optional. No roster = random partners (history for all players, team view by composition). With a roster, history and team views group by member. See [configuration](02-architecture/configuration.md) | 2026-10-31 |
 | Q29 | Early ally death = elimination or leave while the team keeps playing ≥ 60s (configurable) | 2026-10-31 |
+| — | Time unit: real seconds matching the in-game clock (`game_loop / 22.4`). Snapshots are every ~7.14s, not 10s | 2026-10-31 |
+| Q10 | Supply blocks: cap rebuilt from events, used interpolated from snapshots + births. Block = next unit doesn't fit **and** is affordable. Precision is roughly the snapshot interval; no sub-snapshot claims | 2026-10-31 |
+| — | Resource trades (`ResourceTradeEvent`) are modeled; sender counts them as spent, receiver gets a grace window before bank penalties | 2026-10-31 |
+| — | Findings ranked by one common unit: estimated resource cost | 2026-10-31 |
+| — | Gold–Plat default thresholds; spending quotient moves into MVP alongside unspent resources; late expansion uses in-game comparison until benchmarks exist | 2026-10-31 |
+| — | Expansion = town hall finished (or landed) at a new base location; morphs, in-base town halls and macro hatcheries excluded | 2026-10-31 |
