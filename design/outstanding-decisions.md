@@ -39,7 +39,6 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | Q14 | Benchmark source for team modes? Spawning Tool is mostly 1v1 | Little public data for 2v2/3v3; may need a self-built replay pool | Self-built pool from the user's own and downloaded replays |
 | Q15 | Where do replays live, and how many exist? | Sizing the benchmark pool and test fixtures | Point CLI at a directory |
 | Q16 | Benchmark by mode × composition × MMR will be sparse; is pooling by mode and race (ignoring partner) acceptable? | Statistical validity | Yes, pool by mode + own race + MMR bucket |
-| Q17 | Privacy: may findings JSON go to the LLM API? Replays contain player names | User trust | Send findings only, with names replaced by "Player 1…" |
 
 ### Coaching quality
 | ID | Question | Why it matters | Default if undecided |
@@ -73,3 +72,5 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | — | Findings ranked by one common unit: estimated resource cost | 2026-10-31 |
 | — | Gold–Plat default thresholds; spending quotient moves into MVP alongside unspent resources; late expansion uses in-game comparison until benchmarks exist | 2026-10-31 |
 | — | Expansion = town hall finished (or landed) at a new base location; morphs, in-base town halls and macro hatcheries excluded | 2026-10-31 |
+| — | ADR-002 Accepted: Start with `sc2reader`, wrap in `ReplayModel`, fall back to `s2protocol` if patch compatibility breaks during M0 | 2026-10-31 |
+| Q17 | Findings anonymize names with role aliases before LLM API; Report Writer de-anonymizes them back to real player names; LLM output cached deterministically | 2026-10-31 |

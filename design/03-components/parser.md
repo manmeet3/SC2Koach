@@ -20,6 +20,7 @@
 - Teams come from `replay.teams`; record team result, leavers, and observers/AI (see Q8).
 - **Counterparts (nominal):** record each player's lobby slot. Within each team, order players by slot (fall back to player id if slots are missing). The *i*-th player of one team is the nominal counterpart of the *i*-th player of the other (`counterpart_id`, `counterpart_source`: `slot` | `player_id` | `manual`). `--pair` overrides. Nothing in a replay reliably shows who fought whom, so pairing is a convention, not a fact.
 - **Elimination:** record `left_at` (leave event) and `eliminated_at` (last structure destroyed) per player.
+- **Spawn point:** record each player's starting spawn point `(x, y)` from initial base coordinates (used for distance-based expansion checks and map context).
 
 ## Focus player
 - The parser does not filter by focus. It resolves the focus identity (toon handle → name → aliases; see [configuration](../02-architecture/configuration.md)) to `focus_player_id`, or `null` if there's no unique match.

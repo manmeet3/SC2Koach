@@ -11,6 +11,6 @@
 | 7. History (P3) | `MetricsBundle`, `Findings` | SQLite row | yes |
 
 ## Rules
-- Stage N only reads Stage N-1 output (plus benchmarks/history).
-- The LLM sees only `Findings[]` + short history summary — never raw events.
+- Stages read only upstream normalized schema artifacts, never raw `sc2reader` objects. Downstream stages (like Coach and Report Writer) may read multiple upstream schema artifacts (e.g., Report reads ReplayModel, MetricsBundle, Findings, and Coaching).
+- The LLM sees only `Findings[]`, anonymized game metadata, and short history summary — never raw replay events or real player names.
 - Every stage output is JSON-serializable; see [schemas.md](../04-data/schemas.md).

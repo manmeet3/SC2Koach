@@ -22,6 +22,8 @@ For every player (not only the focus player), plus a team section with 1–2 joi
 ## Guardrails
 - Validate output against schema; retry once on failure.
 - If the LLM is unavailable, the report falls back to the deterministic findings list.
+- **Anonymization:** real player names and toon handles are replaced with role aliases (`Player 1 (Focus)`, `Player 2 (Teammate)`, `Player 3 (Counterpart)`, etc.) before sending findings to the LLM API. The Report Writer maps aliases back to display names using an alias table.
+- **Deterministic caching:** LLM responses are cached locally by `hash(findings_json + prompt_template_version + model_id)`. Rerunning on identical findings returns the cached coaching output, saving API costs and preventing regression flakiness.
 
 ## Evaluation
 See [validation-plan](../06-roadmap/validation-plan.md).
