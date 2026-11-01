@@ -17,6 +17,11 @@
 - Unsupported build / corrupt file → `ParseError` with message; CLI exits non-zero.
 - Supported: 2v2 and 3v3 (any team size ≥2 per side parses; modes outside 2v2/3v3 warn). 1v1 is out of scope.
 - Teams come from `replay.teams`; record team result, leavers, and observers/AI (see Q8).
+- **Lobby slot:** record each player's lobby slot. Within each team, order players by slot. The *i*-th player of one team is the counterpart of the *i*-th player of the other team (`counterpart_id`). Verify at M0 that ladder replays give a stable slot order (Q26).
+- **Elimination:** record `left_at` (leave event) and `eliminated_at` (last structure destroyed) per player.
+
+## Focus player
+- The parser does not filter by focus. It resolves the focus name (`--focus` or config default) to a player id and records it as `focus_player_id`, or `null` if that name isn't in the replay (see Q27).
 
 ## Testing
 - Fixture replays covering each race matchup; assert player count, duration, known snapshot values.

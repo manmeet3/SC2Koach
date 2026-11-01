@@ -15,6 +15,13 @@
 | Supply blocks | list of `{start, end, duration, supply}` |
 | Expansion timings | list of `{n, started, finished}` |
 | Army value curve | series per player |
+| Team army value | series per team + disparity series (team − enemy team) |
+| Player elimination | per player `{eliminated_at, left_at}`; flagged as early ally death if the team was still playing |
+
+Team metrics are computed once per team, outside the per-player registry (`compute_team(replay, team) -> TeamMetricResult`). Per-player metrics stop at the player's `eliminated_at`/`left_at`.
+
+## Counterpart comparison
+For each player, each MVP scalar is shown next to the teammates' values and the lobby-slot counterpart's value. This is context only: no rule fires just because a player trails an ally.
 
 ## Supply block rule (initial)
 Supply used ≥ supply made − 0 (capped) at consecutive snapshots / reconstructed timeline, ignoring maxed-out 200/200. Snapshot granularity (10s) limits precision, so reconstruct supply from unit events where possible. Min duration threshold (e.g., 3s) to filter noise.

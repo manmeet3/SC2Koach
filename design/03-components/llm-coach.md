@@ -6,7 +6,7 @@
 Findings JSON (top N per player), game metadata, short history summary. **Never raw events.**
 
 ## Output (JSON, then rendered to Markdown)
-For every player (not only the user), plus a team section with 1–2 joint priorities (e.g. synchronizing attacks). Per player: top 2–3 priorities, each with:
+For every player (not only the focus player), plus a team section with 1–2 joint priorities (e.g. synchronizing attacks). Per player: top 2–3 priorities, each with:
 - `priority` and short title
 - `timestamp(s)` referencing findings
 - `why_it_matters`
@@ -17,6 +17,7 @@ For every player (not only the user), plus a team section with 1–2 joint prior
 - Cite finding IDs; the report writer verifies the IDs exist.
 - Mention progress vs. history where available.
 - Tone: direct, supportive, short.
+- Address the focus player as "you"; every other player in the third person, with the same neutral tone (any of them may be the focus in another run).
 
 ## Guardrails
 - Validate output against schema; retry once on failure.

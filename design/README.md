@@ -2,7 +2,7 @@
 
 Index of all design artifacts. Read in order for the full picture.
 
-**Target:** ranked 2v2 and 3v3. Open items: [outstanding-decisions.md](outstanding-decisions.md).
+**Target:** ranked 2v2 and 3v3. **Focus player:** configurable (`--focus`, default `blacksheep`); all players are analyzed. Open items: [outstanding-decisions.md](outstanding-decisions.md).
 
 | Area | Doc | Purpose |
 |---|---|---|

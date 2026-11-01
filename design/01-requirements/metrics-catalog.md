@@ -10,6 +10,8 @@ Source legend: **S** = stats snapshot (`PlayerStatsEvent`, ~every 10s), **E** = 
 | Supply blocks | Intervals where supply used ≈ supply cap while production was possible; start, end, duration | S + E |
 | Expansion timings | Time each town hall is started/finished | E |
 | Army value curve | Army value over time per player | S |
+| Team army value | Sum of allies' army value vs. enemy team over time; disparity series | S |
+| Player elimination / early ally death | Time each player is eliminated (all structures destroyed) or leaves, while their team is still playing | E + leave events |
 
 ## Phase 3
 | Metric | Definition | Source |
@@ -24,9 +26,10 @@ Source legend: **S** = stats snapshot (`PlayerStatsEvent`, ~every 10s), **E** = 
 | Scouting frequency | Scout commands/units near enemy territory over time | C / E |
 
 ## Team-mode metrics (Phase 3+)
+Team army value and player elimination moved to MVP (see above).
+
 | Metric | Definition | Source |
 |---|---|---|
-| Team army value | Sum of allies' army value vs. enemy team over time | S |
 | Contribution share | Player's share of team income/army value | S |
 | Attack synchronization | Spread between allies' army movements into a fight | C / E |
 | Team fight outcomes | Team army value lost vs. killed per engagement | E |

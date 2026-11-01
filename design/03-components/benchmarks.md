@@ -7,7 +7,7 @@
 - Comparison output: `{metric, value, benchmark_p50, percentile}`.
 
 ## History
-- SQLite table of per-game metrics and findings per player.
+- SQLite table of per-game metrics and findings per player (stored for every player, not just the focus player, so any teammate can later view their own trends).
 - Trend summary for the coach: "supply blocks improved over last 5 games; banking unchanged."
 
 ## MVP

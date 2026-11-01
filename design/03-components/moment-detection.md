@@ -13,8 +13,10 @@ Each rule: `detect(metrics, comparisons) -> list[Finding]`. A finding has type, 
 | Late expansion | "Third base 40s later than benchmark" (needs benchmarks) |
 | Low worker count | "38 workers at 4:00 vs. 44 typical" |
 | Army collapse | "Lost 80% of army value in 20s with resources banked" |
+| Early ally death (team) | "Player 2 eliminated at 7:40; team played 3v2 for 6:10" |
+| Team army deficit (team) | "Team army value 40% below enemy from 8:00–10:30" |
 
-Team-aware: a finding carries the player and team; team-level findings (e.g. "team army value collapsed") are separate from per-player ones. Ally findings are reported but not blamed on the user.
+Team-aware: a finding carries the player and team; team-level findings (e.g. "team army value collapsed") are separate from per-player ones. Findings are phrased neutrally for every player, since any player may be the focus.
 
 ## Ranking
 Severity = impact estimate (duration × weight, deviation from benchmark). Keep the top N per player for the coach; keep all in the JSON.

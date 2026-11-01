@@ -11,7 +11,7 @@ sc2Koach ingests a StarCraft II replay and produces a coaching report. It does *
 3. Give structured findings to an LLM that writes the coaching.
 
 ## Users
-- **Now:** the author (`blacksheep`, Gold–Platinum, plays Terran/Protoss), analyzing ranked 2v2/3v3 replays locally, output as `.md`. The report covers every player and the team as a whole, so teammates (any race) can use it too.
+- **Now:** the author (`blacksheep`, Gold–Platinum, plays Terran/Protoss) and their teammates, analyzing ranked 2v2/3v3 replays locally, output as `.md`. The report covers every player and the team as a whole. The **focus player** is configurable, so anyone (the author or a teammate) can run the same replay and get the report from their own point of view.
 - **Later:** GUI with history across games; optional team/clan view if a fixed group forms.
 
 ## Success criteria
