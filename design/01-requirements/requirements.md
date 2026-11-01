@@ -8,8 +8,8 @@
 | F3 | Detect and timestamp notable moments | 1 |
 | F4 | Write a Markdown report to a given path | 1 |
 | F5 | Emit machine-readable findings JSON alongside the report | 1 |
-| F11 | Accept a configurable focus player (`--focus <name>` or config default); the report is written from that player's perspective | 1 |
-| F12 | Pair each player with an opposing counterpart by lobby slot and compare them | 1 |
+| F11 | Accept a configurable focus player (`--focus`, `--focus-id`, `--alias`, or config); the report is written from that player's perspective | 1 |
+| F12 | Pair each player with a nominal opposing counterpart (lobby slot by default, `--pair` override) and compare them | 1 |
 | F13 | Compute team-level metrics (team army value, player elimination) | 1 |
 | F6 | Generate LLM coaching from findings JSON | 2 |
 | F7 | Compare against benchmarks (matchup + MMR) | 3 |

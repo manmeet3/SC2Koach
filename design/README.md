@@ -13,6 +13,7 @@ Index of all design artifacts. Read in order for the full picture.
 | Architecture | [architecture.md](02-architecture/architecture.md) | Pipeline overview and module layout |
 | | [data-flow.md](02-architecture/data-flow.md) | Stage-by-stage data contracts |
 | | [tech-stack.md](02-architecture/tech-stack.md) | Languages, libraries, tooling |
+| | [configuration.md](02-architecture/configuration.md) | Focus player, identity matching, roster, pairing, thresholds |
 | Components | [parser.md](03-components/parser.md) | Replay → normalized model |
 | | [metrics-engine.md](03-components/metrics-engine.md) | Normalized model → metrics |
 | | [moment-detection.md](03-components/moment-detection.md) | Metrics → timestamped findings |

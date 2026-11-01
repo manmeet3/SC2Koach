@@ -10,7 +10,7 @@ Focus: <focus player> (configurable; "you" wording applies to this player only)
 Team army value vs. enemy (table sampled every 30s), eliminations / early ally deaths, team-level findings
 
 ## Summary
-Table: headline metrics per player (workers@4:00, avg bank, # supply blocks, 2nd/3rd base time), focus player first. Counterpart pairs (by lobby slot) shown side by side.
+Table: headline metrics per player (workers@4:00, avg bank, # supply blocks, 2nd/3rd base time), focus player first. Counterpart pairs shown side by side, labeled "nominal (lobby slot)" or "manual".
 
 ## Coaching            (only if LLM stage ran)
 ### <Player A>

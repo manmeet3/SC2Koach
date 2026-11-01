@@ -21,9 +21,6 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 |---|---|---|---|
 | Q22 | Some metrics only make sense for one race (Terran: MULE/scan usage; Protoss: chrono boost; Zerg: injects/larva). Do we build those for all three races, and in what order? | Teammates may play any race, but each race-specific metric is extra work | Generic metrics first (work for every race); then Terran + Protoss specifics; then Zerg |
 | Q25 | Does the replay actually contain each player's MMR? (sc2reader exposes a rating field for ladder games, but it may be missing or hidden) | The report will show MMR where available; no MMR means no rating-based bucketing | Verify at M0 with a real replay; if absent, show "n/a" and use a `--league` flag |
-| Q27 | How is the focus player matched? Display names aren't unique and can change; one person may have several accounts | Wrong match means wrong "you" and polluted history | Match by Battle.net toon handle when configured, else by name. Config allows a list of aliases per person. No match: warn and write the report in neutral third person |
-| Q28 | Are "my teammates" a fixed group (a roster to configure and track history for) or random ladder partners? | A roster enables a real team view and per-teammate history in Phase 3; random partners don't | Optional `roster` list in config; history is stored for all players either way |
-| Q29 | What counts as an "early" ally death? | Decides when the early-ally-death finding fires | Any elimination or leave while the player's team keeps playing for ≥ 60s |
 
 ### Technical
 | ID | Question | Why it matters | Default if undecided |
@@ -36,7 +33,6 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | Q11 | sc2reader support for the user's current game build? | Parser may fail on new patches | Test early in M0; fall back to s2protocol |
 | Q12 | Front-end stack: FastAPI + React vs. Streamlit/NiceGUI? | Phase 4 effort | Decide at start of Phase 4 |
 | Q13 | Discord bot in scope? | Delivery channel | Deferred |
-| Q26 | Do ladder replays give a meaningful, stable lobby-slot order? The matchmaker assigns slots, so pairs may be arbitrary rather than matching who fights whom | Counterpart comparisons depend on it | Verify at M0. If slots are missing, fall back to player id order and note it in the report appendix |
 
 ### Data / benchmarks
 | ID | Question | Why it matters | Default if undecided |
@@ -65,6 +61,10 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | Q21 | First joint activities: attack timing sync, army/resource disparity between allies, early ally death | 2026-10-31 |
 | Q23 | One report: team section first, then a section per player | 2026-10-31 |
 | Q24 | Include each player's MMR in the report (availability tracked in Q25) | 2026-10-31 |
-| — | Opposing counterparts are paired by **lobby slot**: the *i*-th player of each team (by slot order) face each other | 2026-10-31 |
+| — | Opposing counterparts are paired by **lobby slot**: the *i*-th player of each team (by slot order) face each other (refined in Q26: nominal pairing) | 2026-10-31 |
 | — | Focus player is a configurable parameter (`--focus`, config default `blacksheep`). One report serves the author and teammates; no separate shared version | 2026-10-31 |
 | — | Team army value and player elimination / early ally death move into the Phase 1 MVP | 2026-10-31 |
+| Q26 | Replays can't reliably show who fought whom. Counterparts are **nominal**: lobby-slot order, falling back to player id; `--pair` overrides. Labeled as nominal in the report; team vs. team is the primary comparison; counterpart gaps never trigger findings alone | 2026-10-31 |
+| Q27 | Focus identity: `--focus` (name), `--focus-id` (toon handle), `--alias` (repeatable), or the same keys in config. Match order: toon handle → name → aliases. No unique match: warn, neutral third-person report | 2026-10-31 |
+| Q28 | Roster is optional. No roster = random partners (history for all players, team view by composition). With a roster, history and team views group by member. See [configuration](02-architecture/configuration.md) | 2026-10-31 |
+| Q29 | Early ally death = elimination or leave while the team keeps playing ≥ 60s (configurable) | 2026-10-31 |
