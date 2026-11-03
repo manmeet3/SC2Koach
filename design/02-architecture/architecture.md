@@ -34,8 +34,10 @@ sc2Koach/
 │   ├── moments/            # rules → Findings
 │   ├── benchmarks/         # loaders, comparison
 │   ├── coach/              # prompt + LLM client
-│   ├── report/             # markdown rendering
-│   ├── models.py           # dataclasses / pydantic
+│   ├── report/             # markdown rendering + finding text templates
+│   ├── gamedata.py         # static unit tables: town halls, supply provided, workers, Land abilities
+│   ├── config.py           # TOML loading, precedence, thresholds
+│   ├── models.py           # pydantic models (see schemas.md)
 │   └── cli.py
 ├── tests/
 │   └── fixtures/           # small sample replays

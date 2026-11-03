@@ -11,6 +11,7 @@
 | F11 | Accept a configurable focus player (`--focus`, `--focus-id`, `--alias`, or config); the report is written from that player's perspective | 1 |
 | F12 | Pair each player with a nominal opposing counterpart (lobby slot by default, `--pair` override) and compare them | 1 |
 | F13 | Compute team-level metrics (team army value, player elimination) | 1 |
+| F14 | Without an LLM, list each player's top 3 findings by estimated cost as "Top priorities" | 1 |
 | F6 | Generate LLM coaching from findings JSON | 2 |
 | F7 | Compare against benchmarks (matchup + MMR) | 3 |
 | F8 | Persist per-player history and report trends | 3 |

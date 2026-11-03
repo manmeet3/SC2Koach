@@ -35,4 +35,21 @@ name = "teammate1"
 Default pairing is **nominal**: lobby-slot order within each team, falling back to player id order. Replays can't tell us who actually fought whom, so counterpart comparisons are labeled as nominal and never drive findings on their own.
 
 ## Thresholds
-All detection thresholds live in `[thresholds]` with Gold–Platinum defaults (see [moment-detection](../03-components/moment-detection.md)).
+All detection thresholds and ranking weights live in `[thresholds]` with Gold–Platinum defaults (see [moment-detection](../03-components/moment-detection.md)). Race-specific values use per-race keys, e.g.:
+```toml
+[thresholds]
+supply_block_min_s = 7
+trade_grace_s = 20
+
+[thresholds.low_workers_at_4m]
+Terran = 26
+Protoss = 26
+Zerg = 30
+
+[report]
+top_n = 3
+```
+Unknown keys are an error (catches typos). The effective values are written to the findings JSON and the report appendix.
+
+## Exit codes
+`0` success · `1` unexpected error · `2` unsupported replay (1v1, FFA, archon, AI) · `3` corrupt/unparseable replay or parser failure · `4` invalid config.

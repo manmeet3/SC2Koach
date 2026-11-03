@@ -3,9 +3,9 @@
 | Stage | Input | Output | Persisted? |
 |---|---|---|---|
 | 1. Parse | replay path | `ReplayModel` | optional cache (`.json`) |
-| 2. Metrics | `ReplayModel` | `MetricsBundle` (per player) | with report |
-| 3. Benchmark | `MetricsBundle`, matchup, MMR | `Comparisons` | no |
-| 4. Moments | `MetricsBundle`, `Comparisons` | `Findings[]` | `findings.json` |
+| 2. Metrics | `ReplayModel` | `MetricsBundle` (per player), `TeamMetrics` (per team) | with report |
+| 3. Benchmark (P3) | `MetricsBundle`, matchup, MMR | `Comparisons` | no — MVP passes `null`; rules use fixed thresholds |
+| 4. Moments | `MetricsBundle`, `TeamMetrics`, `Comparisons` | `Findings[]` | in `<name>.findings.json` (`AnalysisResult`) |
 | 5. Coach | `Findings[]`, history summary | `Coaching` | with report |
 | 6. Report | all of the above | `report.md` | yes |
 | 7. History (P3) | `MetricsBundle`, `Findings` | SQLite row | yes |

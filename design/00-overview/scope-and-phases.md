@@ -5,10 +5,10 @@
 - sc2reader parsing, ranked 2v2/3v3 (teams modeled explicitly)
 - 5 per-player metrics: workers at 4:00, unspent resources + spending quotient (trade-adjusted), supply blocks, expansion timings, army value curve
 - 2 team metrics: team army value over time (vs. enemy team), player elimination / early ally death
-- Moment detection with timestamps
+- Moment detection with timestamps, ranked by estimated resource cost
 - Comparative view: teammate vs. teammate and player vs. opposing counterpart (paired by lobby slot)
 - Focus player is a configurable parameter (`--focus <name>`, default from config, initially `blacksheep`); all players are always analyzed
-- Deterministic Markdown report
+- Deterministic Markdown report with a per-player "Top priorities" list (useful without an LLM) + versioned findings JSON
 
 ## Phase 2 — LLM coach
 - One prompt consuming findings JSON
