@@ -1,0 +1,51 @@
+[
+  {
+    "file": "Sandstorm CE (29).SC2Replay",
+    "sha256": "f166e111e5b316a1877899250f7c952fa028a80600c35fb5476d214f84da2bf0",
+    "build": 98310,
+    "mode": "3v3",
+    "composition": "PPT vs PTZ",
+    "duration_s": 1057.3,
+    "tags": [
+      "cc_landing",
+      "latest_build",
+      "mid_game_leaver",
+      "protoss",
+      "resource_trade",
+      "terran",
+      "zerg"
+    ]
+  },
+  {
+    "file": "Canyon of Tribulation (13).SC2Replay",
+    "sha256": "d2b55ca82902d4605de6a8ee1e1def035534bd653c65f127461032373e69b249",
+    "build": 98310,
+    "mode": "3v3",
+    "composition": "TTZ vs PTZ",
+    "duration_s": 971.8,
+    "tags": [
+      "cc_landing",
+      "latest_build",
+      "protoss",
+      "resource_trade",
+      "terran",
+      "zerg"
+    ]
+  },
+  {
+    "file": "New Bed of Chaos LE (5).SC2Replay",
+    "sha256": "813cf734cae80fd82e6069fd5f6aae79f26fc96b46c539dcffa333986ea074e0",
+    "build": 97563,
+    "mode": "2v2",
+    "composition": "PT vs PZ",
+    "duration_s": 991.2,
+    "tags": [
+      "mid_game_leaver",
+      "protoss",
+      "resource_trade",
+      "ruleset_8_workers",
+      "terran",
+      "zerg"
+    ]
+  }
+]
