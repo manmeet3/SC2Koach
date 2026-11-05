@@ -30,17 +30,18 @@ The single top-level artifact the CLI writes, the report renders from, and the G
   "players": [{"id": 1, "team": 1, "name": "string", "race": "Terran", "mmr": 4200,
                "lobby_slot": 0, "counterpart_id": 4, "counterpart_source": "slot",
                "toon_handle": "1-S2-1-1234567", "spawn_point": {"x": 128.5, "y": 42.0},
-               "left_at": null, "eliminated_at": null, "end_t": 620.5}],
+               "starting_workers": 12, "left_at": null, "eliminated_at": null, "end_t": 620.5}],
   "snapshots": [{"t": 7.14, "player": 1, "minerals": 120, "gas": 0, "income_per_min": 600,
                  "supply_used": 14, "supply_made": 15, "workers": 13, "army_value": 0,
                  "army_lost": 0, "army_killed": 0}],
   "unit_events": [{"t": 62.0, "player": 1, "kind": "init", "unit_id": 123, "unit_type": "CommandCenter",
                    "x": 120.0, "y": 60.0}],
   "resource_trades": [{"t": 312.5, "from": 1, "to": 2, "minerals": 200, "gas": 0, "kind": "trade"}],
-  "land_commands": [{"t": 300.0, "player": 1, "unit_id": 123, "x": 140.0, "y": 70.0}]
+  "land_commands": [{"t": 300.0, "player": 1, "x": 140.0, "y": 70.0}],
+  "extra_supplies": [{"t": 410.0, "player": 1, "target_unit_id": 143917057}]
 }
 ```
-`mmr` is `null` when missing. Composition = races sorted alphabetically by initial. `kind` for unit events: `born | init | done | died | type_change`.
+`mmr` is `null` when missing (it may be a shared team rating for arranged teams). Composition = races sorted alphabetically by initial. `kind` for unit events: `born | init | done | died | type_change`. Land commands carry no unit id; landings are matched to the player's latest command (see [parser](../03-components/parser.md)).
 
 ## MetricsBundle
 A nullable scalar is `{"value": null, "reason": "game_ended"}` when it can't be computed (see [metrics-engine](../03-components/metrics-engine.md)).

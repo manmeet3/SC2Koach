@@ -42,9 +42,9 @@ supply_block_min_s = 7
 trade_grace_s = 20
 
 [thresholds.low_workers_at_4m]
-Terran = 26
-Protoss = 26
-Zerg = 30
+Terran = 22
+Protoss = 23
+Zerg = 19
 
 [report]
 top_n = 3

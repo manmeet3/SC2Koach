@@ -8,20 +8,25 @@
 - Race-specific logic lives in separate functions chosen by player race.
 - **Player window:** per-player metrics cover `[0, end_t]` with `end_t = min(left_at, eliminated_at, game end)`.
 - **Undefined values:** a metric that can't be computed (e.g. workers at 4:00 when the game or player ended earlier) is `null` with a `reason` (`game_ended`, `player_ended`, `no_data`). Rules skip `null` metrics. Nothing is extrapolated.
-- **Income rate** (used by several metrics and by ranking costs) = `(minerals_collection_rate + vespene_collection_rate) / 60` resources per second, read from the latest snapshot at or before `t`.
+- **Income rate** (used by several metrics and by ranking costs) = `(minerals_collection_rate + vespene_collection_rate) / 60` resources per second, read from the latest snapshot at or before `t`. The rates are per real (Faster) minute (M0 item 4).
 
 ## MVP metrics
 | Metric | Definition | Output |
 |---|---|---|
-| Workers at 4:00 | Event-based count of the player's living worker units (`is_worker`) at t = 240s: born minus died. Snapshot `workers_active_count` is kept as a series and used as a cross-check | scalar + snapshot worker series |
+| Workers at 4:00 | Snapshot `workers_active_count` at the last regular snapshot ≤ 240s (loop 5280, 3:56). Event counts can't be used: they match exactly for Terran/Protoss but overcount Zerg, because a morphing drone's death event fires when the building finishes ([M0](../06-roadmap/m0-spike-results.md) item 5). Also records `starting_workers` (first snapshot; 12, or 8 on build 97563) | scalar + snapshot worker series |
 | Unspent resources + SQ | Bank = `minerals_current + vespene_current` per snapshot, trade-adjusted (below). SQ formula below | series, mean, peak, seconds above threshold, SQ |
 | Supply blocks | See supply block rule | list of `{start, end, duration_s, supply}` |
 | Expansion timings | See expansion detection | list of `{n, started, finished, x, y, source}` |
 | Army value curve | `minerals_used_current_army + vespene_used_current_army` per snapshot | series |
-| Team army value | Sum of the team members' army value per snapshot time, including members who have left (their units stay on the field under ally control) | series per team + disparity series (team − enemy team) |
+| Team army value | Sum of the team members' army value per regular snapshot, including members who have left (their units stay on the field under ally control; see below) | series per team + disparity series (team − enemy team) |
 | Player elimination | Per player `{eliminated_at, left_at}`; flagged as early ally death if the team kept playing ≥ 60s afterwards (threshold configurable) | list |
 
 Team metrics are computed once per team, outside the per-player registry (`compute_team(replay, team) -> TeamMetricResult`). Team series use only the regular snapshots (game loops that are multiples of 160), which every player shares; the extra leave and game-end snapshots are used only for per-player values.
+
+### Team army value and leavers
+Snapshots keep coming after a player leaves in only 61% of cases (M0 item 10), so a leaver's army can't always be read from snapshots. Per leaver, at each regular snapshot after `left_at`:
+- if the leaver has a snapshot, use it;
+- otherwise use `last_snapshot_army × event_army(t) / event_army(t_last)`, where `event_army` = summed cost of the leaver's finished, living, non-hallucinated army units, from unit events. The ratio cancels the event-based Zerg overcount (event/snapshot army ≈ 1.00 for Terran/Protoss, 1.46 median for Zerg). If `event_army(t_last)` is 0, use 0.
 
 ## Counterpart comparison
 Team vs. enemy team is the primary comparison. For each player, MVP scalars are also shown next to teammates' values and the **nominal** counterpart's value (see [configuration](../02-architecture/configuration.md)). This is context only: no rule fires just because a player trails an ally, a counterpart, or the game average.
@@ -36,7 +41,7 @@ The snapshot `food_used` already includes units in production, since supply is r
    - `minerals_current ≥ 50`, so a worker is affordable. Being broke at full supply isn't a block.
 2. Consecutive blocked snapshots merge into one block. `start` = first blocked snapshot. The true start lies somewhere in the previous snapshot interval, so the reported duration is a **lower bound**.
 3. `end` = the earlier of (a) the first time the event-rebuilt cap gives `cap − food_used ≥ 1`, using `food_used` from the last snapshot, and (b) the next unblocked snapshot.
-4. **Event-rebuilt cap:** supply providers (depot, pylon, overlord, town halls) add their supply when they finish and remove it when they die; capped at 200. The cap is reset to the snapshot `food_made` at every snapshot, so drift can't build up.
+4. **Event-rebuilt cap:** supply providers (depot, pylon, overlord, town halls) add their supply when they finish and remove it when they die; capped at 200. Town hall supply is calibrated per player from the first snapshot (`gamedata.supply_table`), since build 97563 uses 13 (CC/Nexus) and 4 (Hatchery) instead of 15 and 6. **Calldown: Extra Supplies** (game event `ExtraSupplies`) adds 8 to its target depot from the cast time. The cap is reset to the snapshot `food_made` at every snapshot, so drift can't build up. M0 agreement between the rebuilt cap and snapshots: Protoss 100%, Zerg 100%, Terran 96%.
 5. Blocks shorter than `thresholds.supply_block_min_s` (default 7s, one snapshot interval) are dropped. No sub-snapshot precision is claimed for `start`.
 
 ## Unspent resources and spending quotient
@@ -44,7 +49,7 @@ The snapshot `food_used` already includes units in production, since supply is r
 - **Spending quotient** (Kasting's formula): `SQ = 35 × (0.00137 × I − ln(U)) + 240`, where `I` = mean income in resources/minute and `U` = mean `bank_adj` (floored at 1), both over the player's snapshots in `[0, end_t]`. SQ is shown for comparison between players in this tool; it doesn't trigger findings.
 
 ## Expansion detection
-- **Candidates:** town hall `UnitDoneEvent` (CC, Nexus, Hatchery), at the position from its `UnitInitEvent`; and **landings** of a flying CC/Orbital, at the position of its last `Land` command (see [parser](parser.md)).
+- **Candidates:** town hall `UnitDoneEvent` (CC, Nexus, Hatchery), at the position from its `UnitInitEvent`; and **landings** of a flying CC/Orbital, at the target of that player's latest `LandCommandCenter`/`LandOrbitalCommand` command before the landing (503/506 resolved in M0; the lag is flight time, p90 40s; see [parser](parser.md)).
 - **New base location:** a candidate counts only if it is more than `thresholds.expansion_min_distance` (default 15 game units) from **every location where this player has ever had a finished town hall**, including the start location. Excluded as a result:
   - morphs (Orbital, Planetary Fortress, Lair, Hive), which are `UnitTypeChangeEvent`s and not new town halls;
   - town halls in an existing base (in-base CCs, macro hatcheries);
@@ -53,4 +58,4 @@ The snapshot `food_used` already includes units in production, since supply is r
 
 ## Testing
 - Unit tests per metric with hand-checked values from fixture replays.
-- Pure-function tests on synthetic snapshot/event lists for edge cases: blocks at 200, broke at cap, receiver grace window, rebuild at a lost base, CC landing, metrics after `end_t`.
+- Pure-function tests on synthetic snapshot/event lists for edge cases: blocks at 200, broke at cap, receiver grace window, rebuild at a lost base, CC landing, metrics after `end_t`, Extra Supplies, 8-worker ruleset, leaver without snapshots.

@@ -24,6 +24,7 @@ Index of all design artifacts. Read in order for the full picture.
 | | [report-format.md](04-data/report-format.md) | Markdown report layout |
 | Frontend | [gui-plan.md](05-frontend/gui-plan.md) | Future web GUI / Discord delivery |
 | Roadmap | [roadmap.md](06-roadmap/roadmap.md) | Milestones |
+| | [m0-spike-results.md](06-roadmap/m0-spike-results.md) | Data assumptions checked on 375 real replays; threshold calibration |
 | | [validation-plan.md](06-roadmap/validation-plan.md) | How we check advice quality |
 | Decisions | [adr-001-deterministic-first.md](07-decisions/adr-001-deterministic-first.md) | LLM never reads raw replays |
 | | [adr-002-sc2reader-first.md](07-decisions/adr-002-sc2reader-first.md) | Parser choice |

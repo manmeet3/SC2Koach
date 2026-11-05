@@ -2,7 +2,7 @@
 
 | Milestone | Deliverable | Verify |
 |---|---|---|
-| M0 | Repo scaffold (`pyproject.toml`, `uv`, ruff, pytest, CI), sc2reader loads fixture replays, [spike checklist](#m0-spike-checklist) answered | `pytest` loads and prints players with lobby slots, toon handles, MMR |
+| M0 ✅ | Repo scaffold (`pyproject.toml`, `uv`, ruff, pytest, CI), sc2reader loads fixture replays, [spike checklist](#m0-spike-checklist) answered ([results](m0-spike-results.md)) | `pytest` loads and prints players with lobby slots, toon handles, MMR |
 | M1 | `ReplayModel` + snapshots, nominal counterparts, elimination times, focus/roster matching, resource trades, town hall positions | Values match known replay facts; timestamps match the in-game clock within 1s |
 | M2 | 5 per-player + 2 team MVP metrics | Unit tests vs. hand-checked values |
 | M3 | Moment detection + cost-based ranking + findings JSON | Findings include expected block/bank on fixtures; ranking order sanity-checked by hand |
@@ -32,3 +32,5 @@ Run sc2reader on **3+ current-patch ranked 2v2/3v3 replays** (at least one each 
 | 13 | Full pipeline runs in < 30s on a 20-min 3v3 | Lower `load_level`; drop unused event types |
 
 Fixture replays from this spike become the M1–M4 test fixtures.
+
+**Status (2026-11-05):** done on 375 replays; all 13 items answered. Items 5 and 10 used their fallbacks, and two surprises were fixed (build 97563 ruleset, Extra Supplies). See [m0-spike-results](m0-spike-results.md). An in-game look at the generated manual sheet is optional confirmation for items 3–6 and 12.

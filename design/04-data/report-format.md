@@ -2,7 +2,7 @@
 
 ```
 # <Team A players> vs <Team B players> — <Map> (<2v2|3v3>, <compositions>)
-Date · Duration · Result (from the focus player's team; otherwise "Team A won") · Player MMRs (n/a if absent)
+Date · Duration · Result (from the focus player's team; otherwise "Team A won") · Player MMRs (n/a if absent; footnote: arranged teams may share a team rating)
 
 Focus: <focus player> (configurable; "you" wording applies to this player only; "none" → neutral report)
 

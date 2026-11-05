@@ -12,8 +12,8 @@ Findings contain **no prose**. The [report writer](report-writer.md) renders tex
 |---|---|---|---|
 | `supply_block` | player | Each block from the metric (≥ `supply_block_min_s`) | "Supply blocked from 2:10 for at least 25s (22/22) with 150 minerals banked" |
 | `high_bank` | player | `bank_adj` above the bank threshold for ≥ 30s straight (one finding per run) | "Banked 1,200+ for 35s from 6:00 (peak 1,640)" |
-| `low_workers` | player | Workers at 4:00 below the race threshold | "24 workers at 4:00 (game average 29)" |
-| `late_expansion` | player | Base *n* (2 or 3) finished after the race threshold, or not taken at all while the player was still in the game at that time | "Second base finished 4:20 (target 3:30)" |
+| `low_workers` | player | Workers at 4:00 below the race threshold (adjusted for starting workers) | "20 workers at 4:00 (game average 24)" |
+| `late_expansion` | player | Base *n* (2 or 3) finished after the race threshold, or not taken at all while the player was still in the game at that time | "Second base finished 5:40 (target 5:00)" |
 | `army_collapse` | player | Within a 30s window: army lost ≥ 60% of the army value at window start, that army value ≥ 1,000, **and** lost > killed | "Lost 2,100 of 2,800 army value 9:10–9:40 while killing 600" |
 | `early_ally_death` | team | A player eliminated or left while their team kept playing ≥ 60s | "Player 2 left at 7:40; team played a player down for 6:10" |
 | `team_army_deficit` | team | Team army value ≤ 60% of the enemy's for ≥ 60s, counting only time when the enemy's army ≥ 1,500 | "Team army value 40%+ below the enemy's 8:00–10:30" |
@@ -39,15 +39,15 @@ Every finding is scored in one common unit: **estimated resource cost** (`eviden
 - **Deterministic IDs:** after all rules run, findings are sorted by (`start`, team, player, type) and numbered `f-001`, `f-002`, … Same replay + same thresholds → same IDs. Regression tests and the LLM cache rely on this.
 
 ## Default thresholds (Gold–Platinum, team games)
-Starting values only, tuned against real replays during validation. All live in `[thresholds]` config.
+Starting values, calibrated on the author's 375-replay pool to flag roughly the slowest quarter ([M0 results](../06-roadmap/m0-spike-results.md#threshold-calibration)), then tuned during validation. All live in `[thresholds]` config.
 
 | Threshold | Default |
 |---|---|
 | `supply_block_min_s` | 7s |
-| High bank | > 800 for ≥ 30s with the run starting before 6:00; > 1,200 for ≥ 30s after 6:00 |
-| Low workers at 4:00 | < 26 Terran/Protoss; < 30 Zerg |
-| Late 2nd base (finished by) | 3:30 Terran/Protoss; 2:45 Zerg |
-| Late 3rd base (finished by) | 6:00 Terran/Protoss; 4:30 Zerg |
+| High bank | > 800 for ≥ 30s with the run starting before 6:00 (≈ p85 of snapshots); > 1,200 for ≥ 30s after 6:00 |
+| Low workers at 4:00 (snapshot 3:56) | < 22 Terran; < 23 Protoss; < 19 Zerg. For 12 starting workers. With fewer starting workers, subtract `0.5 × (12 − starting_workers)`, rounded (−2 on build 97563) |
+| Late 2nd base (finished by) | 5:00 Terran; 4:30 Protoss; 3:00 Zerg |
+| Late 3rd base (finished by) | 10:00 Terran; 9:00 Protoss; 8:00 Zerg |
 | Army collapse | ≥ 60% of army value lost within 30s; army value ≥ 1,000 at window start; lost > killed |
 | Early ally death | team kept playing ≥ 60s afterwards |
 | Team army deficit | team ≤ 60% of enemy for ≥ 60s; enemy army ≥ 1,500 |

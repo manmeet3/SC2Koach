@@ -20,22 +20,20 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | ID | Question | Why it matters | Default if undecided |
 |---|---|---|---|
 | Q22 | Some metrics only make sense for one race (Terran: MULE/scan usage; Protoss: chrono boost; Zerg: injects/larva). Do we build those for all three races, and in what order? | Teammates may play any race, but each race-specific metric is extra work | Generic metrics first (work for every race); then Terran + Protoss specifics; then Zerg |
-| Q25 | Does the replay actually contain each player's MMR? (sc2reader exposes `init_data["scaled_rating"]` for ladder games, but it may be missing or hidden) | The report will show MMR where available; no MMR means no rating-based bucketing | Verify in the [M0 spike](06-roadmap/roadmap.md#m0-spike-checklist); if absent, show "n/a" and use a `--league` flag |
+| Q30 | 4v4 is 9% of the author's replays (33/375). Promote it from warn-only to supported? | Thresholds and team metrics were designed for 2v2/3v3 | Keep warn-only for MVP; revisit after validation |
 
 ### Technical
 | ID | Question | Why it matters | Default if undecided |
 |---|---|---|---|
 | Q7 | How to define matchup keys for team compositions (e.g. `TP vs ZZ`, 3-race combos, ordering)? | Benchmark keys explode in count | Sort races within a team; key = mode + both compositions |
 | Q9 | Fight attribution in team fights: whose army value lost/killed? | Fights metric (Phase 3) | Team-level first; per-player later. MVP `army_collapse` uses the player's own lost/killed and shows team killed as context |
-| Q11 | sc2reader support for the user's current game build? | Parser may fail on new patches | [M0 spike](06-roadmap/roadmap.md#m0-spike-checklist) item 1; fall back to s2protocol |
 | Q12 | Front-end stack: FastAPI + React vs. Streamlit/NiceGUI? | Phase 4 effort | Decide at start of Phase 4 |
 | Q13 | Discord bot in scope? | Delivery channel | Deferred |
 
 ### Data / benchmarks
 | ID | Question | Why it matters | Default if undecided |
 |---|---|---|---|
-| Q14 | Benchmark source for team modes? Spawning Tool is mostly 1v1 | Little public data for 2v2/3v3; may need a self-built replay pool | Self-built pool from the user's own and downloaded replays |
-| Q15 | Where do replays live, and how many exist? | Sizing the benchmark pool and test fixtures. **Blocks M0:** 3+ current-patch 2v2/3v3 replays are needed as fixtures | Point CLI at a directory; default SC2 path `Documents\StarCraft II\Accounts\<id>\<toon>\Replays\Multiplayer` |
+| Q14 | Benchmark source for team modes? Spawning Tool is mostly 1v1 | Little public data for 2v2/3v3; may need a self-built replay pool | Self-built pool from the user's own and downloaded replays (375 local replays already exist; see Q15) |
 | Q16 | Benchmark by mode × composition × MMR will be sparse; is pooling by mode and race (ignoring partner) acceptable? | Statistical validity | Yes, pool by mode + own race + MMR bucket |
 
 ### Coaching quality
@@ -83,3 +81,11 @@ Single log of unresolved items. When resolved, move to **Resolved** with the dat
 | — | MVP review: report gets per-player sections with deterministic top-3 priorities (useful without an LLM), matching Q23 | 2026-11-02 |
 | — | MVP review: expansions count distinct base locations; rebuilds at a previously held base don't increment `n`. Late-expansion rule covers bases 2 and 3 only | 2026-11-02 |
 | — | MVP review: stack pinned to pydantic v2, typer, ruff, pytest, GitHub Actions CI, `uv`-managed Python 3.11+ | 2026-11-02 |
+| Q11 | sc2reader 1.9.0 loads all 375 replays (builds 94137–98310) at `load_level=4`, ≤ 0.86s each. No s2protocol fallback needed ([M0 results](06-roadmap/m0-spike-results.md)) | 2026-11-05 |
+| Q15 | 375 ranked replays (300 3v3, 42 2v2, 33 4v4) in a local `replays/` folder. The repo is public and replays contain other players' names and battle tags, so they are **never committed**; tests use a SHA-256 manifest and skip without the files | 2026-11-05 |
+| Q25 | MMR (`scaled_rating`) is present for 97% of players; missing → "n/a". Arranged teams appear to share a team rating, which the report footnotes. No `--league` flag needed | 2026-11-05 |
+| — | M0: workers at 4:00 come from the snapshot (3:56), not events. Zerg drone deaths arrive when the building finishes | 2026-11-05 |
+| — | M0: town hall supply is calibrated per player from the first snapshot (build 97563 ruleset: 8 workers, CC/Nexus 13, Hatchery 4). Extra Supplies casts are applied to the supply cap | 2026-11-05 |
+| — | M0: a leaver's army after their snapshots stop = last snapshot × event-based alive-army ratio | 2026-11-05 |
+| — | M0: thresholds recalibrated on the replay pool: workers T22/P23/Z19 (−2 with 8 starting workers); 2nd base T 5:00 / P 4:30 / Z 3:00; 3rd base T 10:00 / P 9:00 / Z 8:00 | 2026-11-05 |
+| — | M0: games under 60s are rejected as unsupported (exit 2) | 2026-11-05 |

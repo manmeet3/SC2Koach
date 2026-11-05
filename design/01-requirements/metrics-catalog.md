@@ -5,9 +5,9 @@ Source legend: **S** = stats snapshot (`PlayerStatsEvent`, every ~7.14 real seco
 ## MVP (Phase 1)
 | Metric | Definition | Source |
 |---|---|---|
-| Workers at 4:00 | Living worker units at 4:00, counted from unit events (born − died); snapshot worker count kept as a series and cross-check | E (+ S) |
+| Workers at 4:00 | Worker count from the last stats snapshot ≤ 4:00 (3:56); event counts overcount Zerg (see [M0](../06-roadmap/m0-spike-results.md)) | S |
 | Unspent resources + spending quotient | Minerals + gas banked over time (mean, peak, time above threshold), **adjusted for resources received from allies** (trades and fulfilled requests). SQ (Kasting formula) normalizes bank by income so early and late game are comparable | S + T |
-| Supply blocks | Snapshot intervals where a worker doesn't fit under the supply cap (< 200) **and** the player could afford one; end refined by supply-provider events (see [metrics-engine](../03-components/metrics-engine.md)) | S + E |
+| Supply blocks | Snapshot intervals where a worker doesn't fit under the supply cap (< 200) **and** the player could afford one; end refined by supply-provider events and Extra Supplies casts (see [metrics-engine](../03-components/metrics-engine.md)) | S + E + C |
 | Expansion timings | Time each town hall is started/finished (or landed) **at a new base location**; morphs, in-base town halls, macro hatcheries and rebuilds excluded | E + C (Land) |
 | Army value curve | Army value (`used_current_army`, minerals + gas) over time per player | S |
 | Team army value | Sum of allies' army value vs. enemy team over time; disparity series | S |
