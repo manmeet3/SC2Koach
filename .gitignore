@@ -5,6 +5,8 @@ replays/
 # Generated output
 out/
 *.findings.json
+!tests/fixtures/*.json
+tests/golden/
 
 # Python
 .venv/

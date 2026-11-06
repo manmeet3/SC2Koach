@@ -5,7 +5,7 @@ Pure functions over ReplayModel; shared by the parser (drift) and metrics (suppl
 
 from __future__ import annotations
 
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 
 from .gamedata import SUPPLY_CAP
 from .models import ReplayModel
@@ -65,9 +65,16 @@ def rebuild_cap(replay: ReplayModel, pid: int) -> list[Step]:
     return steps
 
 
-def value_at(steps: list[Step], t: float, default: float = 0.0) -> float:
-    """Value of a step series at time t (steps at exactly t are included)."""
-    i = bisect_right(steps, (t, float("inf")))
+def value_at(steps: list[Step], t: float, default: float = 0.0, strict: bool = False) -> float:
+    """Value of a step series at time t.
+
+    Steps at exactly t are included, unless `strict` (used when comparing with a stats
+    snapshot: the game records the snapshot before events at the same game loop).
+    """
+    if strict:
+        i = bisect_left(steps, (t, float("-inf")))
+    else:
+        i = bisect_right(steps, (t, float("inf")))
     return steps[i - 1][1] if i else default
 
 
@@ -108,11 +115,11 @@ def compute_drift(replay: ReplayModel) -> dict[str, float | None]:
         p = replay.player(s.player)
         if s.t > p.end_t:
             continue
-        cap = value_at(caps[s.player], s.t)
+        cap = value_at(caps[s.player], s.t, strict=True)
         ok = abs(min(SUPPLY_CAP, s.supply_made) - cap) < 0.01
         cap_hits.setdefault(race[s.player], []).append(ok)
         if s.player in workers and s.t <= 480:
-            worker_hits.append(value_at(workers[s.player], s.t) == s.workers)
+            worker_hits.append(value_at(workers[s.player], s.t, strict=True) == s.workers)
 
     def frac(xs: list[bool]) -> float | None:
         return round(sum(xs) / len(xs), 4) if xs else None

@@ -24,8 +24,8 @@ class _Model(BaseModel):
 
 
 class AnalysisWarning(_Model):
-    """Codes: unverified_build, game_data_drift, unresolved_landing, unknown_unit_type,
-    mode_not_targeted, not_ladder, focus_not_found, focus_ambiguous, bad_pair."""
+    """Codes: unverified_build, game_data_drift, unresolved_landing, unresolved_resource_request,
+    unknown_unit_type, mode_not_targeted, not_ladder, focus_not_found, focus_ambiguous, bad_pair."""
 
     code: str
     message: str

@@ -47,11 +47,43 @@ def info(replay: ReplayArg) -> None:
 @app.command()
 def analyze(
     replay: ReplayArg,
-    output: Annotated[Path | None, typer.Option("-o", "--output", help="Report path")] = None,
+    output: Annotated[
+        Path | None,
+        typer.Option("-o", "--output", help="Report path (default: <replay stem>.md in cwd)"),
+    ] = None,
+    focus: Annotated[str | None, typer.Option("--focus", help="Focus player name")] = None,
+    focus_id: Annotated[
+        str | None, typer.Option("--focus-id", help="Focus player toon handle")
+    ] = None,
+    alias: Annotated[
+        list[str] | None, typer.Option("--alias", help="Other name of the focus player")
+    ] = None,
+    pair: Annotated[
+        list[str] | None,
+        typer.Option("--pair", help="Manual counterpart pair 'nameA:nameB' (repeatable)"),
+    ] = None,
+    config_path: Annotated[
+        Path | None, typer.Option("--config", help="Config file (replaces default lookup)")
+    ] = None,
 ) -> None:
-    """Write a coaching report (not implemented yet; milestone M4)."""
-    typer.echo("error: analyze is not implemented yet (milestone M4).", err=True)
-    raise typer.Exit(1)
+    """Analyze a replay and write <name>.md and <name>.findings.json."""
+    from .config import load_config
+    from .pipeline import analyze as run_analysis
+    from .report import write_outputs
+
+    cli = {"focus": {"name": focus, "toon_handle": focus_id, "aliases": alias or []}}
+    try:
+        config = load_config(cli=cli, explicit_path=config_path)
+        result = run_analysis(replay, config, pairs=pair or [])
+    except Sc2KoachError as err:
+        _fail(err)
+    md_path = output if output is not None else Path.cwd() / f"{replay.stem}.md"
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+    md, js = write_outputs(result, md_path, top_n=config.report.top_n)
+    for w in result.warnings:
+        typer.echo(f"warning [{w.code}]: {w.message}", err=True)
+    typer.echo(f"wrote {md}")
+    typer.echo(f"wrote {js}")
 
 
 @app.command()

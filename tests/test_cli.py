@@ -23,6 +23,13 @@ def test_corrupt_replay_exits_3(tmp_path):
     assert result.exit_code == 3
 
 
-def test_analyze_not_implemented(tmp_path):
+def test_analyze_missing_replay_exits_3(tmp_path):
     result = runner.invoke(app, ["analyze", str(tmp_path / "x.SC2Replay")])
-    assert result.exit_code == 1
+    assert result.exit_code == 3
+
+
+def test_analyze_bad_config_exits_4(tmp_path):
+    cfg = tmp_path / "bad.toml"
+    cfg.write_text("[thresholds]\nnot_a_key = 1\n", encoding="utf-8")
+    result = runner.invoke(app, ["analyze", str(tmp_path / "x.SC2Replay"), "--config", str(cfg)])
+    assert result.exit_code == 4

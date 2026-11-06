@@ -1,6 +1,6 @@
 # sc2Koach Design
 
-Single source of truth for the sc2Koach design. **Status:** M0 done (scaffold + data spike on 375 replays); M1 (parser) is next. Claims about replay data are backed by measurements in [Appendix A](#appendix-a-m0-spike-results).
+Single source of truth for the sc2Koach design. **Status:** Phase 1 MVP implemented (M0–M4): `sc2koach analyze` runs on all 365 supported replays in the author's pool with no errors. Claims about replay data are backed by measurements in [Appendix A](#appendix-a-m0-spike-results).
 
 **Core principle:** stats engine → findings → narrator. Facts are computed deterministically from the replay; an LLM only explains them.
 
@@ -207,9 +207,11 @@ Tooling can lag behind the game too. sc2reader bundles per-build data packs (uni
 
    Metrics and rules take every patch-dependent value from `GameRules`, never from module constants.
 3. **Unknown builds still run, with a warning.** If the build is newer than the newest `RULESETS` entry or sc2reader's newest data pack, analysis proceeds with the latest known values. An `unverified_build` warning goes into the findings JSON and the report appendix.
-4. **Self-check every replay (drift detection).** Two cheap agreement checks run on every replay:
-   - event-rebuilt supply cap vs. snapshot `food_made` (expected ≥ 95%; M0: Protoss 100%, Zerg 100%, Terran 96%);
-   - Terran/Protoss event-based worker count vs. snapshot workers (expected ≥ 99%; M0: 100%).
+4. **Self-check every replay (drift detection).** Two cheap agreement checks run on every replay (`supply.compute_drift`). They count only events strictly *before* each snapshot, because the game records a snapshot before applying the events at the same game loop:
+   - event-rebuilt supply cap vs. snapshot `food_made` (expected ≥ 95%; on the 365-replay pool: Terran 99.7%, Protoss 99.9%, Zerg 99.9%);
+   - Terran/Protoss event-based worker count vs. snapshot workers (expected ≥ 99%; pool: ≈ 100%).
+
+   3 of 365 replays fall below threshold and get the warning.
 
    Below threshold, a `game_data_drift` warning names the build, and the affected metric falls back to snapshot-only data (e.g. a supply block ends at the next unblocked snapshot). Unknown unit types count as providing 0 supply and raise a warning; they never crash the run.
 5. **Thresholds follow the rules.** Thresholds that depend on starting conditions are expressed relative to them (worker thresholds adjust for starting workers). Any threshold can be overridden per ruleset with `[thresholds.rulesets.<ruleset_id>]`.
@@ -251,21 +253,23 @@ All times are **real seconds matching the in-game clock**: `t = game_loop / 22.4
 ### Unit events (tracker)
 - `UnitBornEvent`, `UnitInitEvent`, `UnitDoneEvent`, `UnitDiedEvent`, `UnitTypeChangeEvent`, `UpgradeCompleteEvent`. Use the event's `control_pid` for ownership.
 - Only Born/Init/Died carry `(x, y)` (map units; max 234 seen). Done and TypeChange carry no position, so a unit's position comes from its Born/Init event.
+- Unit attributes (cost, supply, `is_army`, `is_building`, `is_worker`) are taken from sc2reader's data for the unit's type *at that event*. The sc2reader unit object only knows its final type, so copying from it would be wrong after a morph.
+- **MULEs are not workers.** sc2reader flags them as workers, but the game's worker count excludes them.
 - A Zerg drone that morphs into a building gets its `UnitDiedEvent` (no killer) when the building **finishes**, not when it starts.
 
 ### Game events
 - Game events report `pid` as a *user* id; map to players with `event.player.pid`.
 - **Leaves:** `PlayerLeaveEvent` → `left_at`. Leaves at the final loop are ignored (everyone "leaves" when the game ends).
 - **Landed town halls:** a lifted CC/Orbital landing emits only `UnitTypeChangeEvent` (`*Flying` → grounded type), with no position. The landing point is the target of that player's latest `LandCommandCenter`/`LandOrbitalCommand` (`TargetPointCommandEvent`) before the type change. Commands carry no unit id, and the lag is flight time (p50 17s, p90 40s). If no command is found (3/506 in M0), the landing isn't counted and a warning is recorded.
-- **Extra Supplies:** `ExtraSupplies` `TargetUnitCommandEvent`s are kept as `{t, player, target_unit_id}` for the supply cap rebuild.
-- **Resource trades:** `ResourceTradeEvent` (direct transfer) and `ResourceRequestFulfillEvent` (amounts from the matching `ResourceRequestEvent`; sc2reader emits no trade event for these) → `resource_trades[]` with `kind: trade | request`. M0 found 121 direct trades and no requests.
+- **Extra Supplies:** `ExtraSupplies` casts are kept as `{t, player, target_unit_id}` for the supply cap rebuild. They come from `TargetUnitCommandEvent`s and from shift-queued `UpdateTargetUnitCommandEvent`s. The update events repeat the previous command's ability name, which can be stale, so only casts targeting a supply depot are kept. This took Terran cap agreement from 96% to 99.7%.
+- **Resource trades:** `ResourceTradeEvent` (direct transfer) and `ResourceRequestFulfillEvent` → `resource_trades[]` with `kind: trade | request`. sc2reader emits no trade event for fulfilled requests and doesn't number requests, so each fulfill is matched to an open `ResourceRequestEvent` by a guessed request id; unmatched fulfills raise `unresolved_resource_request`. M0 found 121 direct trades and no requests, so this path is untested on real data.
 - Only the commands the MVP needs are kept (leaves, Land, Extra Supplies). Full command capture for APM/injects/chrono comes in Phase 3.
 
 ### Players, teams, identity
 - Teams from `replay.teams`, with the result recorded at team level.
 - `lobby_slot` = `player.sid` (contiguous per team); `toon_handle` = `player.toon_handle` (always present in M0); `mmr` = `init_data["scaled_rating"]`, `null` when missing or ≤ 0 (3%). Arranged teams appear to report a shared team rating (319/750 teams), which the report footnotes.
 - **Nominal counterparts:** within each team, order players by slot (falling back to player id); the *i*-th player of one team is the counterpart of the *i*-th of the other (`counterpart_source`: `slot` | `player_id` | `manual`; `--pair` overrides). Replays don't show who fought whom, so pairing is a convention, not a fact.
-- `eliminated_at` = death of the player's last structure (`is_building`). `end_t = min(left_at, eliminated_at, game end)`.
+- `eliminated_at` = death of the player's last structure (`is_building`; creep tumors excluded). `end_t = min(left_at, eliminated_at, game end)`. Leaves within 1s of the final loop are ignored.
 - `spawn_point` = position of the starting town hall.
 - `replay_sha256` for caching, fixtures and the report appendix.
 - **Focus player:** the parser doesn't filter. It resolves the focus identity ([§10](#10-configuration)) to `focus_player_id`, or `null`.
@@ -582,7 +586,8 @@ Optional stage that turns findings into concise coaching.
 ### Automated tests
 - **Synthetic (run in CI):** pure-function tests on hand-built snapshot/event lists for every metric and rule. Edge cases: blocks at 200, broke at cap, receiver grace window, rebuild at a lost base, CC landing, metrics after `end_t`, Extra Supplies, the 8-worker ruleset, a leaver without snapshots, an unknown build, an unknown unit type, drift fallback.
 - **Fixture replays (local only):** `tests/fixtures/replays.json` lists each fixture's file name, SHA-256 and build. Tests check the hash, then assert known values. They skip when replays are absent, as in CI.
-- **Golden files (local only):** expected findings JSON and report for each fixture; any unexpected change fails. Run before every merge and release, since CI can't.
+- **Golden files (local only):** `tests/golden/` (gitignored) holds the expected Markdown and findings JSON for each fixture. `tests/test_pipeline.py` records them on first run and then compares byte-for-byte; set `SC2KOACH_UPDATE_GOLDEN=1` to re-record after an intended change. Run before every merge and release, since CI can't.
+- **Full-pool run:** `python scripts/run_all.py replays` analyzes every local replay and reports errors, determinism and timing. Current: 365/365, ≈ 0.5s per analysis.
 - **Determinism:** two runs produce byte-identical output.
 
 ### Metric accuracy
@@ -606,11 +611,11 @@ After each new game build, follow the patch procedure in [§4](#4-game-builds-an
 
 | Milestone | Deliverable | Verify |
 |---|---|---|
-| **M0 ✅** | Scaffold (pyproject, ruff, pytest, CI), loader with mode validation, `sc2koach info`, data spike on 375 replays, fixture manifest | 27 tests pass; [Appendix A](#appendix-a-m0-spike-results) |
-| M1 | `ReplayModel` + `GameRules` (rulesets, calibration, drift checks), snapshots, unit events, trades, Land/Extra Supplies commands, counterparts, elimination, focus/roster matching | Values match fixture facts; timestamps match the in-game clock within 1s; drift checks pass on all 375 replays |
-| M2 | 5 per-player + 2 team metrics | Synthetic tests + hand-checked fixture values |
-| M3 | Findings, cost ranking, deterministic IDs, findings JSON | Expected findings on fixtures; ranking sanity-checked by hand |
-| M4 | Markdown report via `sc2koach analyze` | Renders for all fixtures; golden-file and determinism tests |
+| **M0 ✅** | Scaffold (pyproject, ruff, pytest, CI), loader with mode validation, `sc2koach info`, data spike on 375 replays, fixture manifest | [Appendix A](#appendix-a-m0-spike-results) |
+| **M1 ✅** | `ReplayModel` + `GameRules` (rulesets, calibration, drift checks), snapshots, unit events, trades, Land/Extra Supplies commands, counterparts, elimination, focus/roster matching | 365/365 supported replays parse; drift ≥ 99.7% per race; ≤ 1.04s per replay |
+| **M2 ✅** | 5 per-player + 2 team metrics | Synthetic tests (edge cases in §14) |
+| **M3 ✅** | Findings, cost ranking, deterministic IDs, findings JSON | Synthetic tests per rule and boundary |
+| **M4 ✅** | Markdown report via `sc2koach analyze` | Fixture golden files (local); determinism over all 365 replays; 195 tests |
 | M5 | LLM coach | Passes coaching validation |
 | M6 | Benchmarks + history | Comparison fields populated, bucketed by ruleset |
 | M7 | More metrics (APM, inject/chrono, fights) | Per-metric tests |
@@ -674,6 +679,7 @@ After each new game build, follow the patch procedure in [§4](#4-game-builds-an
 | — | Thresholds recalibrated on the replay pool ([§7](#default-thresholds)) | 2026-11-05 |
 | — | Game rules resolved per replay (`GameRules`: observed starting conditions, calibrated supply, ruleset overrides, drift checks, unverified-build warning); patch procedure defined ([§4](#4-game-builds-and-rules)) | 2026-11-05 |
 | — | Design consolidated into this single document | 2026-11-05 |
+| — | MVP implemented (M1–M4). Drift checks count events strictly before each snapshot; MULEs excluded from workers; unit attributes taken per event type; Extra Supplies also read from queued casts | 2026-11-05 |
 
 ---
 
