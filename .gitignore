@@ -6,6 +6,7 @@ replays/
 out/
 *.findings.json
 !tests/fixtures/*.json
+!sample-reports/*.findings.json
 tests/golden/
 
 # Python
