@@ -1,0 +1,27 @@
+humm: 136 games (61 W / 32 L / 43 result unknown), races {'Protoss': 105, 'Terran': 31}
+  Result is unknown when the replay doesn't record a winner (often after
+  someone left early). Those games count only in 'All'.
+
+        Games  Workers@4  SQ  2nd base  3rd base  No 3rd  Blocked s
+   All    136         24  71      4:18      8:43     42%         45
+  Wins     61         25  74      4:07      8:39     33%         59
+Losses     32         24  70      4:39      8:42     47%         23
+
+Share of games where each finding fired (yours, or your team's):
+  finding                 all   wins  losses
+  army_collapse           57%    48%     62%
+  team_army_deficit       35%    10%     62%
+  early_ally_death         5%    10%      0%
+  late_expansion          55%    49%     59%
+  low_workers             17%    13%     22%
+  supply_block            88%    95%     88%
+  high_bank               82%    92%     69%
+
+Biggest difference between your losses and wins (start here):
+  team_army_deficit: fires in 53 percentage points more of your losses
+  army_collapse: fires in 15 percentage points more of your losses
+  late_expansion: fires in 10 percentage points more of your losses
+
+Most common #1 Top priority: high_bank (88), late_expansion (14), army_collapse (13)
+Note: high_bank is over-weighted in Top priorities; compare SQ instead.
+
