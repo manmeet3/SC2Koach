@@ -113,6 +113,7 @@ Teammates can run the same replay with `--focus <their name>` to get the report 
 | [Findings guide](docs/findings-guide.md) | Learn what each of the 7 findings means in the game, how it's detected, and what to do about it (per race) |
 | [Improvement playbook](docs/improvement-playbook.md) | Turn reports into practice: your data on what wins games, a post-session routine, team reviews, a 4-week plan |
 | [Configuration and reference](docs/configuration.md) | Commands, config file, every threshold, warning and exit codes, troubleshooting |
+| [Sample reports](sample-reports/README.md) | Real reports and per-player trends for one 3v3 team |
 | [Design](design/DESIGN.md) | The full technical design (for contributors) |
 
 ---
