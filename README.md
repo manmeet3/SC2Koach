@@ -1,6 +1,6 @@
 # sc2Koach
 
-Coaching reports for StarCraft II ranked **2v2/3v3** replays: replay → deterministic metrics → timestamped findings → Markdown report. Design docs live in [`design/`](design/README.md).
+Coaching reports for StarCraft II ranked **2v2/3v3** replays: replay → deterministic metrics → timestamped findings → Markdown report. The full design is in [`design/DESIGN.md`](design/DESIGN.md).
 
 > Status: **M0** (scaffold + parser spike). The `analyze` command is not implemented yet.
 
@@ -20,7 +20,7 @@ sc2koach info <replay.SC2Replay>      # players, teams, lobby slots, MMR
 ```powershell
 ruff check .
 pytest
-python scripts/spike_m0.py replays     # M0 data-assumption spike
+python scripts/spike_m0.py replays     # data-assumption spike; re-run after every new game build (DESIGN.md §4)
 ```
 
 ### Replays

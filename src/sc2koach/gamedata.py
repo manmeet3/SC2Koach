@@ -35,9 +35,9 @@ LAND_ABILITIES = {
     "LandOrbitalCommand": "OrbitalCommand",
 }
 
-# Supply provided once the unit is finished, on the standard ruleset. Morphs within a family keep
-# the same value. Town hall values vary by patch (build 97563: 13 / Hatchery 4), so use
-# supply_table() with the replay's first snapshot rather than this dict directly.
+# Supply provided once the unit is finished, on the standard ruleset. Game builds can change these
+# (design/DESIGN.md §4): build 97563 uses 13 for CC/Nexus and 4 for Hatchery. Use supply_table()
+# with the replay's first snapshot rather than this dict directly.
 SUPPLY_PROVIDED = {
     "CommandCenter": 15,
     "CommandCenterFlying": 15,

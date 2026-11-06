@@ -24,7 +24,7 @@ class ModeInfo:
 
 
 def classify_mode(replay: Any) -> ModeInfo:
-    """Return the team mode, or raise UnsupportedReplayError (design/03-components/parser.md)."""
+    """Return the team mode, or raise UnsupportedReplayError (design/DESIGN.md §5)."""
     if getattr(replay, "computers", None):
         raise UnsupportedReplayError("Replays with AI players are not supported.")
     players = [p for p in replay.players if not getattr(p, "is_observer", False)]

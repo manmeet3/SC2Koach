@@ -1,4 +1,4 @@
-"""Errors and the CLI exit codes they map to (design/02-architecture/configuration.md)."""
+"""Errors and the CLI exit codes they map to (design/DESIGN.md §10)."""
 
 
 class Sc2KoachError(Exception):
