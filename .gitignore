@@ -1,0 +1,19 @@
+# Replays contain other players' names and battle tags; never commit them (public repo).
+replays/
+*.SC2Replay
+
+# Generated output
+out/
+*.findings.json
+!tests/fixtures/*.json
+tests/golden/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
