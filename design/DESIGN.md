@@ -137,6 +137,8 @@ Rules:
 ```
 sc2Koach/
 ├── design/DESIGN.md        # this document
+├── docs/                   # user documentation: how it works, reading reports, findings guide, playbook, config
+├── scripts/                # spike_m0.py (patch drift check), run_all.py (full-pool run), trends.py (per-player trends)
 ├── src/sc2koach/
 │   ├── parser/             # sc2reader → ReplayModel (loader.py exists: load + mode checks)
 │   ├── metrics/            # one module per metric (registry)
@@ -150,7 +152,6 @@ sc2Koach/
 │   ├── config.py           # TOML loading, precedence, thresholds
 │   ├── models.py           # pydantic models (§9)
 │   └── cli.py
-├── scripts/spike_m0.py     # data-assumption spike / patch drift check
 ├── tests/
 │   └── fixtures/replays.json   # fixture manifest (file, SHA-256, build); replays stay local
 └── replays/                # local only, gitignored
@@ -656,6 +657,7 @@ After each new game build, follow the patch procedure in [§4](#4-game-builds-an
 | Q22 | Race-specific metrics (MULE, chrono, injects): which races, which order? | Generic first; then Terran + Protoss; then Zerg |
 | Q30 | 4v4 is 9% of the author's replays: promote from warn-only? | Warn-only for MVP; revisit after validation |
 | Q31 | Why does build 97563 use 8 workers and lower town hall supply (patch, event, or test ruleset)? | Irrelevant to correctness, since rules are observed per replay; worth knowing for benchmark eras |
+| Q32 | Ranking bias: `high_bank` is the #1 Top priority for 75% of players, but on 201 decided games banking doesn't predict losses (lower-bank team won 43%), while SQ (86%), team army deficit (77% of losses vs 15% of wins), army collapses, missing third base and workers at 4:00 do. Re-weight costs (e.g. scale bank cost by SQ or cap it) toward what predicts losses? | Documented as a caveat in docs/reading-your-report.md until decided |
 
 ### Decision log
 | ID | Decision | Date |
